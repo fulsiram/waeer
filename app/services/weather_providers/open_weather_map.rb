@@ -2,7 +2,7 @@ module WeatherProviders
   class OpenWeatherMap < Base
     BASE_URL = "https://api.openweathermap.org/data/2.5/"
 
-    def get_weather(location)
+    def get_current_weather(location)
       raise ArgumentError, "location must be LocationData" unless location.is_a?(LocationData)
 
       response = api_client.get("weather", {

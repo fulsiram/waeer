@@ -6,6 +6,7 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
   let(:mock_api_token) { "api-token" }
 
   before do
+    allow(ENV).to receive(:[]).and_call_original
     allow(ENV).to receive(:[])
       .with("OPENWEATHERMAP_TOKEN")
       .and_return("api-token")
@@ -21,7 +22,7 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
     end
   end
 
-  describe "#get_weather" do
+  describe "#get_current_weather" do
     let(:location) { LocationData.new(latitude: 40.7128, longtitude: -74.0060, name: "New York") }
     let(:response_code) { 200 }
 
@@ -49,7 +50,7 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
       end
 
       it "returns CurrentWeather with correct attributes" do
-        result = weather_provider.get_weather(location)
+        result = weather_provider.get_current_weather(location)
 
         expect(result).to be_a(CurrentWeather)
         expect(result.temperature).to eq(22.5)
@@ -59,7 +60,7 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
       end
 
       it "calls an API" do
-        weather_provider.get_weather(location)
+        weather_provider.get_current_weather(location)
         test_adapter.verify_stubbed_calls
       end
     end
@@ -69,18 +70,92 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
       let(:api_response) { {} }
 
       it "returns CurrentWeather with correct attributes" do
-        expect { weather_provider.get_weather(location) }.to raise_error(WeatherProviders::BadLocationError)
+        expect { weather_provider.get_current_weather(location) }.to raise_error(WeatherProviders::BadLocationError)
       end
 
       it "calls an API" do
-        expect { weather_provider.get_weather(location) }.to raise_error(WeatherProviders::BadLocationError)
+        expect { weather_provider.get_current_weather(location) }.to raise_error(WeatherProviders::BadLocationError)
         test_adapter.verify_stubbed_calls
       end
     end
 
     context "when location is not LocationData" do
       it "raises ArgumentError" do
-        expect { weather_provider.get_weather("something") }.to raise_error(ArgumentError)
+        expect { weather_provider.get_current_weather("something") }.to raise_error(ArgumentError)
+      end
+    end
+  end
+
+  describe "#get_weather_forecast" do
+    let(:location) { LocationData.new(latitude: 40.7128, longtitude: -74.0060, name: "New York") }
+    let(:response_code) { 200 }
+
+    before do
+      test_adapter.get("/forecast?appid=#{mock_api_token}&lat=40.7128&lon=-74.006&units=metric") do |env|
+        [ response_code, {}, api_response ]
+      end
+    end
+
+    context "when forecast data exists" do
+      let(:api_response) do
+        {
+          "list" => [
+            {
+              "dt_txt" => "2025-08-05 12:00:00",
+              "main" => {
+                "temp_min" => 15.0,
+                "temp_max" => 20.0,
+                "pressure" => 1015,
+                "humidity" => 70
+              },
+              "weather" => [
+                {
+                  "main" => "Clear"
+                }
+              ]
+            },
+            {
+              "dt_txt" => "2025-08-05 15:00:00",
+              "main" => {
+                "temp_min" => 18.0,
+                "temp_max" => 23.0,
+                "pressure" => 1013,
+                "humidity" => 65
+              },
+              "weather" => [
+                {
+                  "main" => "Clouds"
+                }
+              ]
+            }
+          ]
+        }
+      end
+
+      it "returns array of ForecastWeather objects" do
+        result = weather_provider.get_weather_forecast(location)
+
+        expect(result).to be_an(Array)
+        expect(result.first).to be_a(ForecastWeather)
+        expect(result.first.date).to eq(Date.parse("2025-08-05"))
+        expect(result.first.min_temperature).to eq(15.0)
+        expect(result.first.max_temperature).to eq(23.0)
+        expect(result.first.condition).to eq("clear_sky")
+      end
+    end
+
+    context "when location is invalid" do
+      let(:response_code) { 400 }
+      let(:api_response) { {} }
+
+      it "raises BadLocationError" do
+        expect { weather_provider.get_weather_forecast(location) }.to raise_error(WeatherProviders::BadLocationError)
+      end
+    end
+
+    context "when location is not LocationData" do
+      it "raises ArgumentError" do
+        expect { weather_provider.get_weather_forecast("invalid") }.to raise_error(ArgumentError)
       end
     end
   end

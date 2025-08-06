@@ -6,6 +6,7 @@ RSpec.describe GeocodingProviders::OpenWeatherMap do
   let(:mock_api_token) { "api-token" }
 
   before do
+    allow(ENV).to receive(:[]).and_call_original
     allow(ENV).to receive(:[])
       .with("OPENWEATHERMAP_TOKEN")
       .and_return("api-token")
