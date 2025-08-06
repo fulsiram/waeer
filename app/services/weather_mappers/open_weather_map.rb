@@ -9,7 +9,35 @@ module WeatherMappers
       )
     end
 
+    def self.map_forecast_weather(api_response)
+      hourly_forecasts = api_response["list"].map do |forecast|
+        {
+          date: Date.parse(forecast["dt_txt"]),
+          min_temperature: forecast.dig("main", "temp_min"),
+          max_temperature: forecast.dig("main", "temp_max"),
+          condition: map_weather_condition(forecast.dig("weather", 0, "main")),
+          pressure: forecast.dig("main", "pressure"),
+          humidity: forecast.dig("main", "humidity")
+        }
+      end
+
+      # Aggregate by date
+      hourly_forecasts.group_by { |f| f[:date] }.map do |date, day_forecasts|
+        ForecastWeather.new(
+          date: date,
+          min_temperature: day_forecasts.map { |f| f[:min_temperature] }.min,
+          max_temperature: day_forecasts.map { |f| f[:max_temperature] }.max,
+          condition: most_common_condition(day_forecasts.map { |f| f[:condition] }),
+          pressure: (day_forecasts.sum { |f| f[:pressure] } / day_forecasts.size).round,
+          humidity: (day_forecasts.sum { |f| f[:humidity] } / day_forecasts.size).round
+        )
+      end
+    end
+
     private
+    def self.most_common_condition(conditions)
+      conditions.group_by(&:itself).max_by { |_, group| group.size }&.first || "clear_sky"
+    end
 
     def self.map_weather_condition(openweather_condition)
       case openweather_condition&.downcase

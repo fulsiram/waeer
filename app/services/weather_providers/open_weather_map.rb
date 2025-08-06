@@ -18,6 +18,22 @@ module WeatherProviders
       WeatherMappers::OpenWeatherMap.map_current_weather(response.body)
     end
 
+    def get_weather_forecast(location)
+      raise ArgumentError, "location must be LocationData" unless location.is_a?(LocationData)
+
+      response = api_client.get("forecast", {
+        lat: location.latitude,
+        lon: location.longtitude,
+        units: "metric"
+      })
+
+      if response.status == 400
+        raise BadLocationError
+      end
+
+      WeatherMappers::OpenWeatherMap.map_forecast_weather(response.body)
+    end
+
     private
     def api_client
       token = ENV["OPENWEATHERMAP_TOKEN"]
