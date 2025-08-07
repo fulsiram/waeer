@@ -8,6 +8,11 @@ module GeocodingProviders
         limit: 1
       })
 
+      unless response.success?
+        Rails.logger.error("Geocoding error: query=#{query} response_code=#{response.status} response_body=#{response.body.to_json}")
+        raise RequestError, response.status
+      end
+
       data = response.body
 
       if data.empty?
@@ -25,18 +30,22 @@ module GeocodingProviders
 
     private
     def api_client
-      token = ENV["OPENWEATHERMAP_TOKEN"]
-
       Faraday.new(
         url: BASE_URL,
         params: {
-          appid: token
+          appid: api_token
         }
       ) do |builder|
         builder.response :json
         builder.response :logger, nil, { bodies: true, headers: false, errors: true } do |logger|
           logger.filter(/(appid=)[^&]+/, '\1[FILTERED]')
         end
+      end
+    end
+
+    def api_token
+      ENV.fetch("OPENWEATHERMAP_TOKEN") do
+        raise "OPENWEATHERMAP_TOKEN environment variable is required"
       end
     end
   end

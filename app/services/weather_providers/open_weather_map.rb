@@ -11,8 +11,14 @@ module WeatherProviders
         units: "metric"
       })
 
-      if response.status == 400
-        raise BadLocationError
+      unless response.success?
+        Rails.logger.error("Error fetching current weather: lat=#{location.latitude} lon=#{location.longitude} status=#{response.status} response_body=#{response.body.to_json}")
+
+        if response.status == 400
+          raise BadLocationError
+        else
+          raise RequestError, response.status
+        end
       end
 
       WeatherMappers::OpenWeatherMap.map_current_weather(response.body)
@@ -27,8 +33,14 @@ module WeatherProviders
         units: "metric"
       })
 
-      if response.status == 400
-        raise BadLocationError
+      unless response.success?
+        Rails.logger.error("Error fetching weather forecast: lat=#{location.latitude} lon=#{location.longitude} status=#{response.status} response_body=#{response.body.to_json}")
+
+        if response.status == 400
+          raise BadLocationError
+        else
+          raise RequestError, response.status
+        end
       end
 
       WeatherMappers::OpenWeatherMap.map_forecast_weather(response.body)
@@ -36,18 +48,22 @@ module WeatherProviders
 
     private
     def api_client
-      token = ENV["OPENWEATHERMAP_TOKEN"]
-
       Faraday.new(
         url: BASE_URL,
         params: {
-          appid: token
+          appid: api_token
         }
       ) do |builder|
         builder.response :json
         builder.response :logger, nil, { bodies: true, headers: false, errors: true } do |logger|
           logger.filter(/(appid=)[^&]+/, '\1[FILTERED]')
         end
+      end
+    end
+
+    def api_token
+      ENV.fetch("OPENWEATHERMAP_TOKEN") do
+        raise "OPENWEATHERMAP_TOKEN environment variable is required"
       end
     end
   end

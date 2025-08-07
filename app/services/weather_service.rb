@@ -11,7 +11,6 @@ class WeatherService
     raise ArgumentError, "query is empty" if query.blank?
 
     cache_key = "geocoding:#{query.downcase.strip}"
-    # Location data shouldn't change often, we can even increase TTL to a week
     location = Rails.cache.fetch(cache_key, expires_in: 24.hours) do
       @geocoding_provider.geocode(query)
     end

@@ -1,5 +1,6 @@
 module WeatherProviders
-  class BadLocationError < Exception; end
+  class BadLocationError < StandardError; end
+  class RequestError < StandardError; end
 
   class Base
     def get_current_weather(location)

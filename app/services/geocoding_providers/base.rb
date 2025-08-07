@@ -1,5 +1,6 @@
 module GeocodingProviders
-  class LocationNotFoundError < Exception; end
+  class LocationNotFoundError < StandardError; end
+  class RequestError < StandardError; end
 
   class Base
     def geocode(query)

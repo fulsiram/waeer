@@ -7,7 +7,6 @@ class WeatherController < ApplicationController
   rescue GeocodingProviders::LocationNotFoundError
     flash.now[:alert] = "Location not found. Please try a different city name."
   rescue => e
-    # TODO: Properly handle this with observability stack
     Rails.logger.error(e.message)
     Rails.logger.error(e.backtrace.join("\n"))
     flash.now[:alert] = "Something went wrong. Please try again later."

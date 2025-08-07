@@ -6,8 +6,8 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
   let(:mock_api_token) { "api-token" }
 
   before do
-    allow(ENV).to receive(:[]).and_call_original
-    allow(ENV).to receive(:[])
+    allow(ENV).to receive(:fetch).and_call_original
+    allow(ENV).to receive(:fetch)
       .with("OPENWEATHERMAP_TOKEN")
       .and_return("api-token")
 
@@ -69,13 +69,22 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
       let(:response_code) { 400 }
       let(:api_response) { {} }
 
-      it "returns CurrentWeather with correct attributes" do
+      it "raises BadLocationError" do
         expect { weather_provider.get_current_weather(location) }.to raise_error(WeatherProviders::BadLocationError)
       end
 
       it "calls an API" do
         expect { weather_provider.get_current_weather(location) }.to raise_error(WeatherProviders::BadLocationError)
         test_adapter.verify_stubbed_calls
+      end
+    end
+
+    context "when API returns non-400 error status" do
+      let(:response_code) { 500 }
+      let(:api_response) { { "error" => "Server error" } }
+
+      it "raises RequestError" do
+        expect { weather_provider.get_current_weather(location) }.to raise_error(WeatherProviders::RequestError)
       end
     end
 
@@ -153,9 +162,59 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
       end
     end
 
+    context "when API returns error status" do
+      let(:response_code) { 500 }
+      let(:api_response) { { "error" => "Server error" } }
+
+      it "raises RequestError" do
+        expect { weather_provider.get_weather_forecast(location) }.to raise_error(WeatherProviders::RequestError)
+      end
+    end
+
     context "when location is not LocationData" do
       it "raises ArgumentError" do
         expect { weather_provider.get_weather_forecast("invalid") }.to raise_error(ArgumentError)
+      end
+    end
+  end
+
+  describe "#api_client" do
+    before do
+      allow(weather_provider).to receive(:api_client).and_call_original
+    end
+    
+    it "configures Faraday with correct base URL and params" do
+      client = weather_provider.send(:api_client)
+
+      expect(client.url_prefix.to_s).to eq("https://api.openweathermap.org/data/2.5/")
+      expect(client.params[:appid]).to eq(mock_api_token)
+    end
+
+    it "includes JSON response middleware" do
+      client = weather_provider.send(:api_client)
+
+      expect(client.builder.handlers).to include(Faraday::Response::Json)
+    end
+
+    it "includes logger middleware" do
+      client = weather_provider.send(:api_client)
+
+      expect(client.builder.handlers).to include(Faraday::Response::Logger)
+    end
+  end
+
+  describe "#api_token" do
+    it "returns the OPENWEATHERMAP_TOKEN environment variable" do
+      expect(weather_provider.send(:api_token)).to eq(mock_api_token)
+    end
+
+    context "when token is not set" do
+      before do
+        allow(ENV).to receive(:fetch).with("OPENWEATHERMAP_TOKEN").and_yield
+      end
+
+      it "raises an error" do
+        expect { weather_provider.send(:api_token) }.to raise_error("OPENWEATHERMAP_TOKEN environment variable is required")
       end
     end
   end
