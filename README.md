@@ -127,7 +127,7 @@ The application is structured around clean separation of concerns:
 - **`GeocodingProviders::OpenWeatherMap`**: Geocoding implementation using OpenWeatherMap
 
 ### Supporting Components
-- **`WeatherMappers::OpenWeatherMap`**: Transforms external API responses into domain models
+- **`DataMappers::OpenWeatherMap`**: Transforms external API responses into domain models
 
 ## 🔌 API Providers
 

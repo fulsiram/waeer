@@ -21,7 +21,7 @@ module WeatherProviders
         end
       end
 
-      WeatherMappers::OpenWeatherMap.map_current_weather(response.body)
+      DataMappers::OpenWeatherMap.map_current_weather(response.body)
     end
 
     def get_weather_forecast(location)
@@ -43,7 +43,7 @@ module WeatherProviders
         end
       end
 
-      WeatherMappers::OpenWeatherMap.map_forecast_weather(response.body)
+      DataMappers::OpenWeatherMap.map_forecast_weather(response.body)
     end
 
     private

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe WeatherMappers::OpenWeatherMap do
+RSpec.describe DataMappers::OpenWeatherMap do
   describe ".map_current_weather" do
     let(:api_response) do
       {

@@ -1,4 +1,4 @@
-module WeatherMappers
+module DataMappers
   class OpenWeatherMap
     def self.map_current_weather(api_response)
       CurrentWeather.new(

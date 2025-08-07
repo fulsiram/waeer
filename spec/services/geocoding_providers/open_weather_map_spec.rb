@@ -80,7 +80,7 @@ RSpec.describe GeocodingProviders::OpenWeatherMap do
     before do
       allow(geocoder).to receive(:api_client).and_call_original
     end
-    
+
     it "configures Faraday with correct base URL and params" do
       client = geocoder.send(:api_client)
 
