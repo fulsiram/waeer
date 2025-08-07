@@ -23,6 +23,7 @@ module WeatherMappers
         }
       end
 
+      # Aggregate hourly forecasts into daily summaries
       hourly_forecasts.group_by { |f| f[:date] }.map do |date, day_forecasts|
         ForecastWeather.new(
           date: date,
@@ -54,9 +55,12 @@ module WeatherMappers
         :thunderstorm
       when "snow"
         :snow
+      # Group various atmospheric conditions under 'mist' for simplicity
       when "mist", "smoke", "haze", "dust", "fog", "sand", "ash", "squall", "tornado"
         :mist
       else
+        Rails.logger.warn("Unknown OpenWeatherMap condition: #{openweather_condition}")
+        # Fallback to clear_sky to not break anything
         :clear_sky
       end
     end
