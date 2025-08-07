@@ -49,7 +49,7 @@ RSpec.describe GeocodingProviders::OpenWeatherMap do
 
         expect(result).to be_a(LocationData)
         expect(result.latitude).to eq(40.7128)
-        expect(result.longtitude).to eq(-74.0060)
+        expect(result.longitude).to eq(-74.0060)
         expect(result.name).to eq('New York')
       end
     end

@@ -23,7 +23,7 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
   end
 
   describe "#get_current_weather" do
-    let(:location) { LocationData.new(latitude: 40.7128, longtitude: -74.0060, name: "New York") }
+    let(:location) { LocationData.new(latitude: 40.7128, longitude: -74.0060, name: "New York") }
     let(:response_code) { 200 }
 
     before do
@@ -87,7 +87,7 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
   end
 
   describe "#get_weather_forecast" do
-    let(:location) { LocationData.new(latitude: 40.7128, longtitude: -74.0060, name: "New York") }
+    let(:location) { LocationData.new(latitude: 40.7128, longitude: -74.0060, name: "New York") }
     let(:response_code) { 200 }
 
     before do

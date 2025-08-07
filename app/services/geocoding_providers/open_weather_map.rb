@@ -11,13 +11,13 @@ module GeocodingProviders
       data = response.body
 
       if data.empty?
-        raise Base::LocationNotFoundError
+        raise LocationNotFoundError
       end
 
       location = data.first
 
       LocationData.new(
-        longtitude: location["lon"],
+        longitude: location["lon"],
         latitude: location["lat"],
         name: location["name"]
       )

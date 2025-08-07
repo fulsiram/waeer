@@ -5,7 +5,9 @@ module WeatherMappers
         temperature: api_response.dig("main", "temp"),
         condition: map_weather_condition(api_response.dig("weather", 0, "main")),
         pressure: api_response.dig("main", "pressure"),
-        humidity: api_response.dig("main", "humidity")
+        humidity: api_response.dig("main", "humidity"),
+        wind_speed: api_response.dig("wind", "speed"),
+        wind_direction: api_response.dig("wind", "deg")
       )
     end
 
@@ -21,7 +23,6 @@ module WeatherMappers
         }
       end
 
-      # Aggregate by date
       hourly_forecasts.group_by { |f| f[:date] }.map do |date, day_forecasts|
         ForecastWeather.new(
           date: date,

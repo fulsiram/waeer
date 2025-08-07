@@ -7,7 +7,7 @@ module WeatherProviders
 
       response = api_client.get("weather", {
         lat: location.latitude,
-        lon: location.longtitude,
+        lon: location.longitude,
         units: "metric"
       })
 
@@ -23,7 +23,7 @@ module WeatherProviders
 
       response = api_client.get("forecast", {
         lat: location.latitude,
-        lon: location.longtitude,
+        lon: location.longitude,
         units: "metric"
       })
 

@@ -1,7 +1,7 @@
 module GeocodingProviders
-  class Base
-    class LocationNotFoundError < Exception; end
+  class LocationNotFoundError < Exception; end
 
+  class Base
     def geocode(query)
       raise NotImplementedError
     end
