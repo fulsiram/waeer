@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
   <div class="max-w-md mx-auto">
     <div class="text-center mb-6 pt-8">
-      <h1 class="text-2xl font-light text-gray-800 mb-6">WAEER</h1>
+      <h1 class="text-2xl font-light text-gray-800 mb-6 hover:text-blue-600 transition-colors duration-200 cursor-pointer"><a href="/">WAEER</a></h1>
 
       <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-1 mb-6 shadow-lg">
         <%= form_with url: "/", method: :get, local: true, class: "flex items-center" do |form| %>
@@ -51,7 +51,7 @@
           </div>
           <div class="text-5xl font-thin text-gray-800 mb-2">
             <%= @weather_data.current.temperature.round %>°
-          </div>
+          </div>>
           <p class="text-gray-600 text-lg"><%= @weather_data.current.condition&.humanize || 'Partly Cloudy' %></p>
         </div>
 
