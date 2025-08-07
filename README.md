@@ -115,16 +115,16 @@ The application is structured around clean separation of concerns:
 
 ### Core Models
 - **`WeatherData`**: Main aggregate root containing location, current weather, and forecast data
-- **`CurrentWeather`**: Encapsulates current weather conditions (temperature, pressure, humidity, wind)
-- **`ForecastWeather`**: Contains forecast data with daily predictions
+- **`CurrentWeather`**: Current weather conditions (temperature, pressure, humidity, wind)
+- **`ForecastWeather`**: Contains daily forecast data
 - **`LocationData`**: Geographic data with latitude/longitude coordinates and location name
 
 ### Service Layer
 - **`WeatherService`**: Orchestrates weather data retrieval, handles caching, and coordinates between providers
-- **`WeatherProviders::Base`**: Abstract base class defining provider interface
-- **`WeatherProviders::OpenWeatherMap`**: Concrete implementation for OpenWeatherMap API
-- **`GeocodingProviders::Base`**: Abstract base for geocoding services
-- **`GeocodingProviders::OpenWeatherMap`**: Geocoding implementation using OpenWeatherMap
+- **`WeatherProviders::Base`**: Weather provider interface
+- **`WeatherProviders::OpenWeatherMap`**: OpenWeatherMap API implementation
+- **`GeocodingProviders::Base`**: Geocoding provider interface
+- **`GeocodingProviders::OpenWeatherMap`**: Geocoding implementation for OpenWeatherMap API
 
 ### Supporting Components
 - **`DataMappers::OpenWeatherMap`**: Transforms external API responses into domain models
