@@ -182,7 +182,7 @@ RSpec.describe WeatherProviders::OpenWeatherMap do
     before do
       allow(weather_provider).to receive(:api_client).and_call_original
     end
-    
+
     it "configures Faraday with correct base URL and params" do
       client = weather_provider.send(:api_client)
 
