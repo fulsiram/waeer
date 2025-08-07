@@ -116,7 +116,14 @@ RSpec.describe WeatherMappers::OpenWeatherMap do
       expect(described_class.send(:map_weather_condition, "Clear")).to eq(:clear_sky)
       expect(described_class.send(:map_weather_condition, "Clouds")).to eq(:few_clouds)
       expect(described_class.send(:map_weather_condition, "Rain")).to eq(:rain)
+      expect(described_class.send(:map_weather_condition, "Drizzle")).to eq(:shower_rain)
+      expect(described_class.send(:map_weather_condition, "Thunderstorm")).to eq(:thunderstorm)
       expect(described_class.send(:map_weather_condition, "Snow")).to eq(:snow)
+
+      [ "mist", "smoke", "haze", "dust", "fog", "sand", "ash", "squall", "tornado" ].each do |condition|
+        expect(described_class.send(:map_weather_condition, condition.capitalize)).to eq(:mist)
+      end
+
       expect(described_class.send(:map_weather_condition, "Unknown")).to eq(:clear_sky)
     end
   end
