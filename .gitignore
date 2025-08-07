@@ -38,3 +38,5 @@
 !/app/assets/builds/.keep
 
 coverage/
+
+/config/credentials/production.key
