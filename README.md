@@ -10,16 +10,6 @@ A modern weather application built with Ruby on Rails that provides current weat
 - **Smart Caching**: Optimized API usage with Solid Cache (Rails 8)
 - **Enterprise Architecture**: Clean, modular service-oriented design
 
-## 🏗️ Architecture
-
-WAEER follows enterprise-grade architectural patterns:
-
-- **Service Layer**: Modular weather and geocoding providers
-- **Provider Pattern**: Pluggable weather data sources (currently OpenWeatherMap)
-- **Smart Caching**: Database-backed caching with intelligent TTL strategies
-- **Error Handling**: Comprehensive error management with user-friendly messages
-- **Testing**: Full RSpec test suite with high coverage
-
 ## 🚀 Tech Stack
 
 - **Backend**: Ruby on Rails 8.0
