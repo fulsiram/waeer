@@ -8,7 +8,7 @@ class WeatherService
   end
 
   def get_weather_for_query(query)
-    raise ArgumentError("query is empty") if query.blank?
+    raise ArgumentError, "query is empty" if query.blank?
 
     cache_key = "geocoding:#{query.downcase.strip}"
     location = Rails.cache.fetch(cache_key, expires_in: 24.hours) do

@@ -61,7 +61,7 @@ RSpec.describe GeocodingProviders::OpenWeatherMap do
 
 
       it "raises LocationNotFoundError" do
-        expect { geocoder.geocode('New York') }.to raise_error(GeocodingProviders::Base::LocationNotFoundError)
+        expect { geocoder.geocode('New York') }.to raise_error(GeocodingProviders::LocationNotFoundError)
       end
     end
   end

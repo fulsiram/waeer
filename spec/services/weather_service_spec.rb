@@ -27,9 +27,10 @@ RSpec.describe WeatherService do
 
   describe "#get_weather_for_query" do
     context "when query is blank" do
-      it "returns nil" do
-        result = weather_service.get_weather_for_query("")
-        expect(result).to be_nil
+      it "raises ArgumentError" do
+        expect {
+          weather_service.get_weather_for_query("")
+        }.to raise_error(ArgumentError)
       end
     end
 
